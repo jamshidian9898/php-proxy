@@ -112,7 +112,8 @@ class Response {
 
 	public function send(){
 		$this->sendHeaders();
-		echo $this->content;
+		
+		return $this->content;
 	}
 
 }
