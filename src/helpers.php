@@ -85,8 +85,8 @@ function str_rot_pass($str, $key, $decrypt = false){
 }
 
 function app_url(){
-	if(Config::get('app_url')){
-		return Config::get('app_url');
+	if(config('app.APP_PROXY_URL')){
+		return config('app.APP_PROXY_URL');
 	}
 	else{
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
