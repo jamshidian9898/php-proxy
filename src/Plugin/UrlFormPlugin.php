@@ -1,5 +1,7 @@
 <?php
 
+namespace Proxy\Plugin;
+
 use Proxy\Config;
 use Proxy\Event\ProxyEvent;
 use Proxy\Plugin\AbstractPlugin;
