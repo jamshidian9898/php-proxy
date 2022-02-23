@@ -10,6 +10,7 @@ use Proxy\Html;
 class ProxifyPlugin extends AbstractPlugin {
 
 	private $base_url = '';
+	private $content_type = '';
 	
 	private function css_url($matches){
 		
@@ -126,7 +127,27 @@ class ProxifyPlugin extends AbstractPlugin {
 	
 	// The <body> background attribute is not supported in HTML5. Use CSS instead.
 	private function proxify_css($str){
-		
+		if ($this->content_type == 'text/html') {
+			$doc = new \DomDocument();
+			@$doc->loadHTML($str, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+			$xpath = new \DOMXPath($doc);
+
+			foreach($xpath->query("//style") as $style) {
+				// $testings[] = $style->nodeValue;
+				$str = preg_replace_callback('@[^a-z]{1}url\s*\((?:\'|"|)(.*?)(?:\'|"|)\)@im', array($this, 'css_url'), $style->nodeValue);
+				$str = preg_replace_callback('/@import (\'|")(.*?)\1/i', array($this, 'css_import'), $str);
+				$style->nodeValue = $str;
+			}
+
+			foreach ($xpath->query("//*[@style]") as $element) {
+				$str = preg_replace_callback('@[^a-z]{1}url\s*\((?:\'|"|)(.*?)(?:\'|"|)\)@im', array($this, 'css_url'), $element->getAttribute("style"));
+				$str = preg_replace_callback('/@import (\'|")(.*?)\1/i', array($this, 'css_import'), $str);
+				$element->setAttribute("style", $str);
+			}
+
+			return $doc->saveHTML();
+		}
+
 		// The HTML5 standard does not require quotes around attribute values.
 		
 		// if {1} is not there then youtube breaks for some reason
@@ -146,13 +167,13 @@ class ProxifyPlugin extends AbstractPlugin {
 		$url_host = parse_url($this->base_url, PHP_URL_HOST);
 		
 		$response = $event['response'];
-		$content_type = clean_content_type($response->headers->get('content-type'));
+		$this->content_type = clean_content_type($response->headers->get('content-type'));
 		
 		$str = $response->getContent();
 		
 		// DO NOT do any proxification on .js files and text/plain content type
 		$no_proxify = array('text/plain');
-		if(in_array($content_type, $no_proxify)){
+		if(in_array($this->content_type, $no_proxify)){
 			return;
 		}
 		
