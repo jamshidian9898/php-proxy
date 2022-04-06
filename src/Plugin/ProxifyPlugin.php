@@ -37,10 +37,14 @@ class ProxifyPlugin extends AbstractPlugin {
 		if(starts_with($url, $schemes)){
 			return $matches[0];
 		}
-		
+
 		$url = str_replace('../', '', $url);
+		$url = str_replace('./', '', $url);
+
+		$matchesstring = str_replace('../', '', $matches[0]);
+		$matchesstring = str_replace('./', '', $matchesstring);
 		
-		return str_replace($url, proxify_url($url, $this->base_url), $matches[0]);
+		return str_replace($url, proxify_url($url, $this->base_url), $matchesstring);
 	}
 
 	private function form_action($matches){
@@ -201,6 +205,9 @@ class ProxifyPlugin extends AbstractPlugin {
 		// img srcset
 		$str = preg_replace_callback('/srcset=\"(.*?)\"/i', function($matches){
 			$src = $matches[1];
+
+			$src = str_replace('../', '', $src);
+			$src = str_replace('./', '', $src);
 			
 			// url_1 1x, url_2 4x, ...
 			$urls = preg_split('/\s*,\s*/', $src);
@@ -213,8 +220,6 @@ class ProxifyPlugin extends AbstractPlugin {
 					$src = str_replace($url, proxify_url($url, $this->base_url), $src);
 				}
 			}
-			
-			$src = str_replace('../', '', $str);
 			
 			return 'srcset="'.$src.'"';
 		}, $str);
