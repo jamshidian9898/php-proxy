@@ -154,13 +154,10 @@ function url_encrypt($url, $key = false){
 		$url = str_rot_pass($url, Config::get('encryption_key'));
 	}
 	
-	return rawurlencode($url);
+	return $url;
 }
 
 function url_decrypt($url, $key = false){
-
-	$url = rawurldecode($url);
-	
 	if($key){
 		$url = str_rot_pass($url, $key, true);
 	} else if(Config::get('encryption_key')){
