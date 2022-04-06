@@ -38,6 +38,8 @@ class ProxifyPlugin extends AbstractPlugin {
 			return $matches[0];
 		}
 		
+		$url = str_replace('../', '', $url);
+		
 		return str_replace($url, proxify_url($url, $this->base_url), $matches[0]);
 	}
 
@@ -211,6 +213,8 @@ class ProxifyPlugin extends AbstractPlugin {
 					$src = str_replace($url, proxify_url($url, $this->base_url), $src);
 				}
 			}
+			
+			$src = str_replace('../', '', $str);
 			
 			return 'srcset="'.$src.'"';
 		}, $str);
