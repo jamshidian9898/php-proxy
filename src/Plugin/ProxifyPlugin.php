@@ -48,7 +48,6 @@ class ProxifyPlugin extends AbstractPlugin {
 	}
 
 	private function form_action($matches){
-		
 		// sometimes form action is empty - which means a postback to the current page
 		// $matches[1] holds single or double quote - whichever was used by webmaster
 		
@@ -176,6 +175,20 @@ class ProxifyPlugin extends AbstractPlugin {
 		$this->content_type = clean_content_type($response->headers->get('content-type'));
 		
 		$str = $response->getContent();
+
+		if (!stripos($this->base_url, '.js') === false) {
+			preg_match_all('/\"([^\"]*)\.(png|eot|otf|rtf|ttf|txt|woff|woff2)"/i', $str, $matches);
+			foreach ($matches[1] as $key => $matchone) {
+				$src = str_replace('../', '', $matchone);
+				$src = str_replace('./', '', $src);
+
+				$str = str_replace($matchone, proxify_url($src, $this->base_url), $str);
+			}
+
+			if (stripos($this->base_url, '_next') === false) {
+				return $response->setContent($str);
+			}
+		}
 		
 		// DO NOT do any proxification on .js files and text/plain content type
 		$no_proxify = array('text/plain');
