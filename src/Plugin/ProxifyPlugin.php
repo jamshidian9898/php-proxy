@@ -38,6 +38,10 @@ class ProxifyPlugin extends AbstractPlugin {
 			return $matches[0];
 		}
 
+		if (stripos($matches[0], 'fonts.googleapis.com') !== false) {
+			return $matches[0];
+		}
+
 		$url = str_replace('../', '', $url);
 		$url = str_replace('./', '', $url);
 
@@ -185,8 +189,8 @@ class ProxifyPlugin extends AbstractPlugin {
 				$str = str_replace($matchone, proxify_url($src, $this->base_url), $str);
 			}
 
-			if (stripos($this->base_url, '_next') === false) {
-				return $response->setContent($str);
+			return $response->setContent($str);
+			if (!stripos($this->base_url, '_next') === false) {
 			}
 		}
 		
@@ -225,12 +229,13 @@ class ProxifyPlugin extends AbstractPlugin {
 			// url_1 1x, url_2 4x, ...
 			$urls = preg_split('/\s*,\s*/', $src);
 			foreach($urls as $part){
-				
 				// TODO: add str_until helper
 				$pos = strpos($part, ' ');
 				if($pos !== false){
 					$url = substr($part, 0, $pos);
 					$src = str_replace($url, proxify_url($url, $this->base_url), $src);
+				} else {
+					$src = str_replace($part, proxify_url($part, $this->base_url), $src);
 				}
 			}
 			
