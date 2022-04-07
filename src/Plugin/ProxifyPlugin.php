@@ -177,7 +177,7 @@ class ProxifyPlugin extends AbstractPlugin {
 		$str = $response->getContent();
 
 		if (!stripos($this->base_url, '.js') === false) {
-			preg_match_all('/\"([^\"]*)\.(png|eot|otf|rtf|ttf|txt|woff|woff2)"/i', $str, $matches);
+			preg_match_all('/\"([^\"]*)\.(png|svg|jpg|jpeg|eot|otf|rtf|ttf|txt|woff|woff2)"/i', $str, $matches);
 			foreach ($matches[1] as $key => $matchone) {
 				$src = str_replace('../', '', $matchone);
 				$src = str_replace('./', '', $src);
