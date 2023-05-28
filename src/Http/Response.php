@@ -41,6 +41,7 @@ class Response {
 		415 => 'Unsupported Media Type',
 		416 => 'Requested range not satisfiable',
 		417 => 'Expectation Failed',
+		422 => 'Unprocessable Content',
 		429 => 'Too Many Requests',
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',
@@ -74,7 +75,7 @@ class Response {
 	}
 	
 	public function getStatusText(){
-		return $this->statusCodes[$this->getStatusCode()];
+		return isset($this->statusCodes[$this->getStatusCode()]) ? $this->statusCodes[$this->getStatusCode()]: $this->getStatusCode();
 	}
 	
 	public function setContent($content){
@@ -117,5 +118,3 @@ class Response {
 	}
 
 }
-
-?>
