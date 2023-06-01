@@ -323,7 +323,7 @@ class Request {
 	
 	public static function createFromGlobals(){
 	
-		$method = 'GET';
+		$method = $_SERVER['REQUEST_METHOD'];
 		$scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http';
 		
 		$url = config('app.APP_URL');
